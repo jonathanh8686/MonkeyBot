@@ -41,13 +41,11 @@ namespace MonkeyBot
             return Task.CompletedTask;
         }
 
-        private Task Print(string msg, ConsoleColor color)
+        private void Print(string msg, ConsoleColor color)
         {
             Console.ForegroundColor = color;
             Console.WriteLine(msg);
             Console.ForegroundColor = ConsoleColor.White;
-
-            return Task.CompletedTask;
         }
     }
 }
