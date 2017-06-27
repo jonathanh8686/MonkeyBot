@@ -21,9 +21,11 @@ namespace MonkeyBot
             _client.MessageDeleted += MessageDeleted;
 
             _client.GuildMemberUpdated += UserUpdated;
-            _client.UserUpdated += UserUpdated;
+            _client.UserJoined += UserJoined;
+            _client.UserLeft += UserLeft;
+            
+            //TODO: Add support for Bans and Role Changes (Perms)
         }
-
 
 
         public static void EnsureExists()
@@ -50,7 +52,13 @@ namespace MonkeyBot
            => File.AppendAllText(FilePath, msg.Timestamp.DateTime + " " + msg.Author + ": (-) \"" + msg.Content + "\"" + Environment.NewLine);
 
         public static void AddUserNicknameUpdatedEvent(SocketGuildUser before, SocketGuildUser after)
-            => File.AppendAllText(FilePath, DateTime.Now + " " + "User \"" + before.Nickname + "\" => \"" + after.Nickname + "\"");
+            => File.AppendAllText(FilePath, DateTime.Now + " " + "User " + before.Username + " changed \"" + before.Nickname + "\" => \"" + after.Nickname + "\"");
+
+        public static void AddUserJoinedEvent(SocketGuildUser user)
+            => File.AppendAllText(FilePath, DateTime.Now + " " + user.Username + "(\"" + user.Nickname + "\") has joined the Guild");
+
+        public static void AddUserLeftEvent(SocketGuildUser user)
+            => File.AppendAllText(FilePath, DateTime.Now + " " + user.Username + "(\"" + user.Nickname + "\") has left the Guild");
         #endregion
 
         #region MessageEvents
@@ -91,12 +99,24 @@ namespace MonkeyBot
             {
                 if (before.Nickname != after.Nickname)
                 {
-                    string outText = "User \"" + before.Nickname + "\" => \"" + after.Nickname + "\"";
+                    string outText = "User " + before.Username + " changed \"" + before.Nickname + "\" => \"" + after.Nickname + "\"";
                     await Program.Log(new LogMessage(LogSeverity.Verbose, "", outText));
 
                     AddUserNicknameUpdatedEvent(before, after);
                 }
             }
+        }
+
+        private static async Task UserJoined(SocketGuildUser user)
+        {
+            await Program.Log(new LogMessage(LogSeverity.Verbose, "", user.Username + "(\"" + user.Nickname + "\") has joined the Guild"));
+            AddUserJoinedEvent(user);
+        }
+
+        private static async Task UserLeft(SocketGuildUser user)
+        {
+            await Program.Log(new LogMessage(LogSeverity.Verbose, "", user.Username + "(\"" + user.Nickname + "\") has left the Guild"));
+            AddUserJoinedEvent(user);
         }
 
         #endregion
