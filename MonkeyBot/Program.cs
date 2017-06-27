@@ -3,12 +3,16 @@ using System.IO;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
+using Discord.Commands;
 using Newtonsoft.Json;
 
 namespace MonkeyBot
 {
     class Program
     {
+        private DiscordSocketClient _client;
+        private CommandHandler _cmdHandler;
+
         static void Main(string[] args)
             => new Program().MainAsync().GetAwaiter().GetResult();
 
@@ -18,26 +22,32 @@ namespace MonkeyBot
             Console.ForegroundColor = ConsoleColor.White;
 
             Config.EnsureExists();
-            Config botdata = Config.Load();
+            AuditLog.EnsureExists();
 
+            var botdata = Config.Load();
+            
             // Check if the .json file contains "BotPrefix"
-            var client = new DiscordSocketClient(new DiscordSocketConfig
+            _client = new DiscordSocketClient(new DiscordSocketConfig
             {
-                LogLevel = LogSeverity.Info,
-                MessageCacheSize = 1000,
+                LogLevel = LogSeverity.Verbose,
+                MessageCacheSize = 2000,
             });
 
+            _client.Log += Log;
 
-            client.Log += Log;
+
+            _cmdHandler = new CommandHandler();
+            await _cmdHandler.InstallAsync(_client);
 
             await Log(new LogMessage(LogSeverity.Info, "", "BotToken: " + botdata.BotToken + " located!"));
             Console.WriteLine("");
 
+            // Login and Connect to Discord
             try
             {
                 // Login to Dicords - Connects Bot
-                await client.LoginAsync(TokenType.Bot, botdata.BotToken);
-                await client.StartAsync();
+                await _client.LoginAsync(TokenType.Bot, botdata.BotToken);
+                await _client.StartAsync();
             }
             catch (Exception ex)
             {
@@ -48,31 +58,32 @@ namespace MonkeyBot
 
             await Task.Delay(-1);
         }
+
         /// <summary>
         /// Logs data to the Console
         /// </summary>
         /// <param name="msg">LogMessage object to describe log data</param>
-        private static Task Log(LogMessage msg)
+        public static Task Log(LogMessage msg)
         {
             switch (msg.Severity)
             {
                 case LogSeverity.Info:
-                    Print(DateTime.Now + "\t" + "INFO: " + msg.Message, ConsoleColor.Cyan);
+                    Print("INFO: " + msg.Message, ConsoleColor.Cyan);
                     break;
                 case LogSeverity.Verbose:
-                    Print(DateTime.Now + "\t" + "VERBOSE: " + msg.Message, ConsoleColor.Cyan);
+                    Print("VERBOSE: " + msg.Message, ConsoleColor.Green);
                     break;
                 case LogSeverity.Debug:
-                    Print(DateTime.Now + "\t" + "DEBUG: " + msg.Message, ConsoleColor.DarkGreen);
+                    Print("DEBUG: " + msg.Message, ConsoleColor.DarkGreen);
                     break;
                 case LogSeverity.Warning:
-                    Print(DateTime.Now + "\t" + "WARN: " + msg.Message, ConsoleColor.Yellow);
+                    Print("WARN: " + msg.Message, ConsoleColor.Yellow);
                     break;
                 case LogSeverity.Error:
-                    Print(DateTime.Now + "\t" + "ERROR: " + msg.Message, ConsoleColor.DarkRed);
+                    Print("ERROR: " + msg.Message, ConsoleColor.DarkRed);
                     break;
                 case LogSeverity.Critical:
-                    Print(DateTime.Now + "\t" + "CRITICAL: " + msg.Message, ConsoleColor.Red);
+                    Print("CRITICAL: " + msg.Message, ConsoleColor.Red);
                     break;
             }
 
@@ -87,7 +98,7 @@ namespace MonkeyBot
         public static void Print(string msg, ConsoleColor color = ConsoleColor.White)
         {
             Console.ForegroundColor = color;
-            Console.WriteLine(msg);
+            Console.WriteLine(DateTime.Now + "\t" + msg);
             Console.ForegroundColor = ConsoleColor.White;
         }
     }

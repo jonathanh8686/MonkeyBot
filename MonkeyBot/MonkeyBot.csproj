@@ -9,4 +9,8 @@
     <PackageReference Include="Discord.Net" Version="1.0.0-rc2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Logs\" />
+  </ItemGroup>
+
 </Project>
