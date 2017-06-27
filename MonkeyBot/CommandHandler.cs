@@ -35,7 +35,7 @@ namespace MonkeyBot
             if (msg.HasStringPrefix(Config.Load().BotPrefix, ref argPos) ||
                 msg.HasMentionPrefix(_client.CurrentUser, ref argPos))
             {
-                await Program.Log(new LogMessage(LogSeverity.Info, "", msg.Author + " said " + msg.Content));
+                await Program.Log(new LogMessage(LogSeverity.Info, "", msg.Author + ": \"" + msg.Content + "\""));
                 var result = await _cmds.ExecuteAsync(context, argPos);
 
                 if (!result.IsSuccess)
@@ -43,7 +43,7 @@ namespace MonkeyBot
             }
             else
             {
-                await Program.Log(new LogMessage(LogSeverity.Verbose, "", msg.Author + " said " + msg.Content));
+                await Program.Log(new LogMessage(LogSeverity.Verbose, "", msg.Author + ": \"" + msg.Content + "\""));
                 AuditLog.AddMessageEvent(s);
             }
         }

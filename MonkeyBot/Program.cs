@@ -12,6 +12,7 @@ namespace MonkeyBot
     {
         private DiscordSocketClient _client;
         private CommandHandler _cmdHandler;
+        private AuditLog _auditLog;
 
         static void Main(string[] args)
             => new Program().MainAsync().GetAwaiter().GetResult();
@@ -36,16 +37,27 @@ namespace MonkeyBot
             _client.Log += Log;
 
 
+            _auditLog = new AuditLog();
+             _auditLog.Mount(_client);
+
             _cmdHandler = new CommandHandler();
             await _cmdHandler.InstallAsync(_client);
 
             await Log(new LogMessage(LogSeverity.Info, "", "BotToken: " + botdata.BotToken + " located!"));
             Console.WriteLine("");
 
-            // Login and Connect to Discord
+            await Login(botdata);
+            await Task.Delay(-1);
+        }
+
+        /// <summary>
+        /// Login and Connect to the Discord
+        /// </summary>
+        /// <param name="botdata">Config class containing data about the bot</param>
+        private async Task Login(Config botdata)
+        {
             try
             {
-                // Login to Dicords - Connects Bot
                 await _client.LoginAsync(TokenType.Bot, botdata.BotToken);
                 await _client.StartAsync();
             }
@@ -55,8 +67,6 @@ namespace MonkeyBot
                 await Log(new LogMessage(LogSeverity.Critical, "", ex.Message));
                 await Log(new LogMessage(LogSeverity.Error, "", "Possibly invalid token?"));
             }
-
-            await Task.Delay(-1);
         }
 
         /// <summary>
