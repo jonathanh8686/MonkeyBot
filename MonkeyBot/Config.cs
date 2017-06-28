@@ -13,6 +13,7 @@ namespace MonkeyBot
 
         public string BotToken { get; set; }
         public string BotPrefix { get; set; }
+        public string WolframID { get; set; }
 
         public static void EnsureExists()
         {
@@ -31,8 +32,13 @@ namespace MonkeyBot
                 Program.Print("Please enter Prefix: ");
                 string botprefix = Console.ReadLine();
 
+                Program.Print("Please enter Wolfram Alpha API ID: ");
+                string wolframID = Console.ReadLine();
+
                 con.BotToken = bottoken;
                 con.BotPrefix = botprefix;
+                con.WolframID = wolframID;
+
                 con.Save();
             }
 

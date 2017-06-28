@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
 namespace MonkeyBot
@@ -12,6 +13,7 @@ namespace MonkeyBot
     {
         private DiscordSocketClient _client;
         private CommandHandler _cmdHandler;
+
         private AuditLog _auditLog;
 
         static void Main(string[] args)
@@ -36,15 +38,12 @@ namespace MonkeyBot
 
             _client.Log += Log;
 
-
             _auditLog = new AuditLog();
              _auditLog.Mount(_client);
 
             _cmdHandler = new CommandHandler();
-            await _cmdHandler.InstallAsync(_client);
-
-            await Log(new LogMessage(LogSeverity.Info, "", "BotToken: " + botdata.BotToken + " located!"));
-            Console.WriteLine("");
+            await _cmdHandler.InstallCommands(_client);
+            
 
             await Login(botdata);
             await Task.Delay(-1);
@@ -56,6 +55,9 @@ namespace MonkeyBot
         /// <param name="botdata">Config class containing data about the bot</param>
         private async Task Login(Config botdata)
         {
+            await Log(new LogMessage(LogSeverity.Info, "", "BotToken: " + botdata.BotToken + " located!"));
+            Console.WriteLine("");
+
             try
             {
                 await _client.LoginAsync(TokenType.Bot, botdata.BotToken);

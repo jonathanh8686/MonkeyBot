@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 
 namespace MonkeyBot
@@ -23,7 +25,7 @@ namespace MonkeyBot
             _client.GuildMemberUpdated += UserUpdated;
             _client.UserJoined += UserJoined;
             _client.UserLeft += UserLeft;
-            
+
             //TODO: Add support for Bans and Role Changes (Perms)
         }
 
@@ -42,23 +44,24 @@ namespace MonkeyBot
         }
 
         #region Events
+
         public static void AddMessageEvent(SocketMessage msg)
-            => File.AppendAllText(FilePath, msg.Timestamp.DateTime + " " + msg.Author + ": \"" + msg.Content + "\"" + Environment.NewLine);
-
+            => File.AppendAllText(FilePath, $"{DateTime.Now} {msg.Author}: \"{msg.Content}\" {Environment.NewLine}");
         public static void AddMessageEditedEvent(SocketMessage before, SocketMessage after)
-            => File.AppendAllText(FilePath, after.Timestamp.DateTime + " " + after.Author + ": \"" + before.Content + "\" => \"" + after.Content + "\"" + Environment.NewLine);
-
+            => File.AppendAllText(FilePath, $"{after.Timestamp.DateTime} {after.Author}: \"{before.Content}\" => \"{after.Content}\" {Environment.NewLine}");
         public static void AddMessageDeletedEvent(SocketMessage msg)
-           => File.AppendAllText(FilePath, msg.Timestamp.DateTime + " " + msg.Author + ": (-) \"" + msg.Content + "\"" + Environment.NewLine);
-
+            => File.AppendAllText(FilePath, $"{msg.Timestamp.DateTime} {msg.Author}: (-) \"{msg.Content}\" {Environment.NewLine}");
         public static void AddUserNicknameUpdatedEvent(SocketGuildUser before, SocketGuildUser after)
-            => File.AppendAllText(FilePath, DateTime.Now + " " + "User " + before.Username + " changed \"" + before.Nickname + "\" => \"" + after.Nickname + "\"");
-
+            => File.AppendAllText(FilePath, $"{DateTime.Now} User {before.Username} changed \"{before.Nickname}\" => \"{after.Nickname}\" {Environment.NewLine}");
         public static void AddUserJoinedEvent(SocketGuildUser user)
-            => File.AppendAllText(FilePath, DateTime.Now + " " + user.Username + "(\"" + user.Nickname + "\") has joined the Guild");
-
+            => File.AppendAllText(FilePath, $"{DateTime.Now} {user.Username} \"{user.Nickname}\" has joined the Guild! {Environment.NewLine}");
         public static void AddUserLeftEvent(SocketGuildUser user)
-            => File.AppendAllText(FilePath, DateTime.Now + " " + user.Username + "(\"" + user.Nickname + "\") has left the Guild");
+            => File.AppendAllText(FilePath, $"{DateTime.Now} {user.Username} (\"{user.Nickname}\") has left the Guild! {Environment.NewLine}");
+        public static void AddCommandResultEvent(IResult res)
+            => File.AppendAllText(FilePath, res.IsSuccess
+                    ? $"{DateTime.Now} The previous command was successfully evaluated! {Environment.NewLine}"
+                    : $"{DateTime.Now} The previous command failed with ErrorReason: \"{res.ErrorReason}\" {Environment.NewLine}");
+
         #endregion
 
         #region MessageEvents
@@ -109,7 +112,7 @@ namespace MonkeyBot
 
         private static async Task UserJoined(SocketGuildUser user)
         {
-            await Program.Log(new LogMessage(LogSeverity.Verbose, "", user.Username + "(\"" + user.Nickname + "\") has joined the Guild"));
+            await Program.Log(new LogMessage(LogSeverity.Verbose, "", $"user.Username + (\" + {user.Nickname} \") has joined Guild"));
             AddUserJoinedEvent(user);
         }
 
