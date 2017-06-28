@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Numerics;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
@@ -17,7 +18,17 @@ namespace MonkeyBot.Modules
         [Summary("Evaluates an expression")]
         public async Task Eval(string question)
         {
-            WebClient wc = new WebClient();
+            string wolframKey = Config.Load().WolframID;
+            string pageURL = $"http://api.wolframalpha.com/v2/query?input={question}&appid={Config.Load().WolframID}&output=json";
+
+            using (HttpClient client = new HttpClient())
+            using (HttpResponseMessage response = await client.GetAsync(pageURL))
+            using (HttpContent content = response.Content)
+            {
+                string result = await content.ReadAsStringAsync();
+
+                
+            }
         }
 
         [Command("add")]

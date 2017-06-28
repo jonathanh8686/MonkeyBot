@@ -6,6 +6,9 @@ using Discord.WebSocket;
 using Discord.Commands;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace MonkeyBot
 {
@@ -112,6 +115,25 @@ namespace MonkeyBot
             Console.ForegroundColor = color;
             Console.WriteLine(DateTime.Now + "\t" + msg);
             Console.ForegroundColor = ConsoleColor.White;
+        }
+
+        public static string GetMiddle(string data, string begin, string end)
+        {
+            var beginPosition = data.IndexOf(begin, StringComparison.Ordinal);
+            if (beginPosition < 0) return "";
+            var valueEnd = data.IndexOf(end, beginPosition + begin.Length, StringComparison.Ordinal);
+            if (valueEnd > beginPosition + begin.Length)
+                return data.Substring(beginPosition + begin.Length, valueEnd - beginPosition + begin.Length).Trim();
+            return "";
+        }
+        public static List<string> GetMiddleList(string data, string begin, string end)
+        {
+            data = data.Replace("\n", "");
+            data = data.Replace("\r", "");
+            var pattern = begin + ".*?" + end;
+            pattern = pattern.Replace("(", "\\(");
+            var matches = Regex.Matches(data, pattern);
+            return (from Match nextOne in matches select nextOne.Value.ToString() into strTemp select GetMiddle(strTemp, begin, end).Replace("&amp; ", "")).ToList();
         }
     }
 }
