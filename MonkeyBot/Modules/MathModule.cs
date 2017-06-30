@@ -4,10 +4,13 @@ using System.Text;
 using System.Numerics;
 using System.Net;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.Webhook;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace MonkeyBot.Modules
 {
@@ -18,16 +21,30 @@ namespace MonkeyBot.Modules
         [Summary("Evaluates an expression")]
         public async Task Eval(string question)
         {
+            question = question.Replace(" ", "");
+            if (question == "1+1")
+            {
+                await ReplyAsync("2");
+                return;
+            }
+
             string wolframKey = Config.Load().WolframID;
-            string pageURL = $"http://api.wolframalpha.com/v2/query?input={question}&appid={Config.Load().WolframID}&output=json";
+            string pageURL = $"http://api.wolframalpha.com/v2/query?input={question}&appid={Config.Load().WolframID}&output=json&format=plaintext&includepodid=result";
 
             using (HttpClient client = new HttpClient())
             using (HttpResponseMessage response = await client.GetAsync(pageURL))
             using (HttpContent content = response.Content)
             {
                 string result = await content.ReadAsStringAsync();
-
-                
+                JObject resdata = JObject.Parse(result);
+                try
+                {
+                    await ReplyAsync((string) resdata["queryresult"]["pods"][0]["subpods"][0]["plaintext"]);
+                }
+                catch (Exception)
+                {
+                    await ReplyAsync("Exception: Expression could not be parsed.");
+                }
             }
         }
 
@@ -98,6 +115,11 @@ namespace MonkeyBot.Modules
         [Summary("Get the quotient of two numbers")]
         public async Task Divide(float a, float b)
         {
+            if (b == 0)
+            {
+                await ReplyAsync("Divide by 0 Error!");
+                return;
+            }
             float quotient = 0;
             checked
             {
@@ -129,7 +151,7 @@ namespace MonkeyBot.Modules
             {
                 try
                 {
-                    ans = (long)(Math.Pow(a, b)); 
+                    ans = (long)Math.Pow(a, b); 
                 }
                 catch (OverflowException)
                 {

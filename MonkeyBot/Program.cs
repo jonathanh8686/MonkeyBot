@@ -135,5 +135,13 @@ namespace MonkeyBot
             var matches = Regex.Matches(data, pattern);
             return (from Match nextOne in matches select nextOne.Value.ToString() into strTemp select GetMiddle(strTemp, begin, end).Replace("&amp; ", "")).ToList();
         }
+
+        public static string StripHTML(string htmlString)
+        {
+            htmlString = htmlString.Replace("\r", "");
+            htmlString = htmlString.Replace("\n", "");
+            htmlString = htmlString.Replace("\\", "");
+            return Regex.Replace(htmlString, @"<(.|\n)*?>", string.Empty);
+        }
     }
 }
