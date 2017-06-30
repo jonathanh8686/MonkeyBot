@@ -261,4 +261,4 @@ __pycache__/
 *.pyc
 
 #Custom
-configuration.json
+config/configuration.json
