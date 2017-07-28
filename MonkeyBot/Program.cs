@@ -22,6 +22,10 @@ namespace MonkeyBot
         static void Main(string[] args)
             => new Program().MainAsync().GetAwaiter().GetResult();
 
+        /// <summary>
+        /// Main problem start
+        /// </summary>
+        /// <returns></returns>
         public async Task MainAsync()
         {
             await Log(new LogMessage(LogSeverity.Verbose, "", "Bot Started..."));
@@ -43,10 +47,11 @@ namespace MonkeyBot
 
             _auditLog = new AuditLog();
              _auditLog.Mount(_client);
+            // Allow problem to use Auditing
 
             _cmdHandler = new CommandHandler();
             await _cmdHandler.InstallCommands(_client);
-            
+            // Inserts commands into bot
 
             await Login(botdata);
             await Task.Delay(-1);
@@ -135,7 +140,6 @@ namespace MonkeyBot
             var matches = Regex.Matches(data, pattern);
             return (from Match nextOne in matches select nextOne.Value.ToString() into strTemp select GetMiddle(strTemp, begin, end).Replace("&amp; ", "")).ToList();
         }
-
         public static string StripHTML(string htmlString)
         {
             htmlString = htmlString.Replace("\r", "");

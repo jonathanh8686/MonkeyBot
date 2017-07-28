@@ -18,16 +18,10 @@ namespace MonkeyBot.Modules
     public class MathModule : ModuleBase
     {
         [Command("eval")]
-        [Summary("Evaluates an expression")]
+        [Summary("Evaluates an expression (Experimental)")]
         public async Task Eval(string question)
         {
             question = question.Replace(" ", "");
-            if (question == "1+1")
-            {
-                await ReplyAsync("2");
-                return;
-            }
-
             string wolframKey = Config.Load().WolframID;
             string pageURL = $"http://api.wolframalpha.com/v2/query?input={question}&appid={Config.Load().WolframID}&output=json&format=plaintext&includepodid=result";
 
