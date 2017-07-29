@@ -17,5 +17,12 @@ namespace MonkeyBot.Modules
             // TODO: Add how long it took for the bot to respond "Pong!"
             await ReplyAsync("Pong!");
         }
+
+        [Command("71")]
+        [Summary("lmao")]
+        public async Task YongjaeMics()
+        {
+            await ReplyAsync("https://thumb.gyazo.com/thumb/1200/_7ce8bd0fa6f7407c0a04ed4a7a3acc57-png.jpg");
+        }
     }
 }

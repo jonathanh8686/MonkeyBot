@@ -6,7 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="config\configuration.json" />
+    <Compile Remove="config\**" />
+    <EmbeddedResource Remove="config\**" />
+    <None Remove="config\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -14,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="config\" />
     <Folder Include="Logs\" />
   </ItemGroup>
 
