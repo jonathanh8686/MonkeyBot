@@ -1,5 +1,7 @@
 ﻿{
   "BotToken": "MzIyOTAyNzY1NzUzOTkxMTY5.DDdq6w.i00TgLeXphmN544TvLvq4IBs9oM",
   "BotPrefix": "-",
-  "WolframID": "X5EJ8K-EYP6KRUXTG"
+  "WolframID": "X5EJ8K-EYP6KRUXTG",
+  "GoogleGeoCodeID" : "AIzaSyBqCLlC_vYG4q_fSi7yJyVx6oG62Y2zwbQ",
+  "GoogleTimezoneID": "AIzaSyA5T7I6VS38Q-ehJrzpC8-tdkkcthaVpYA"
 }
