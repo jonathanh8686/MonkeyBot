@@ -20,7 +20,7 @@ namespace MonkeyBot.Modules
 
         [Command("71")]
         [Summary("lmao")]
-        public async Task YongjaeMics()
+        public async Task YongjaeDmg()
         {
             await ReplyAsync("https://thumb.gyazo.com/thumb/1200/_7ce8bd0fa6f7407c0a04ed4a7a3acc57-png.jpg");
         }
