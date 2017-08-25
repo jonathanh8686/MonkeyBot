@@ -18,6 +18,7 @@ namespace MonkeyBot
         private CommandHandler _cmdHandler;
 
         private AuditLog _auditLog;
+        private StatsLog _statsLog;
 
         static void Main(string[] args)
             => new Program().MainAsync().GetAwaiter().GetResult();
@@ -33,6 +34,7 @@ namespace MonkeyBot
 
             Config.EnsureExists();
             AuditLog.EnsureExists();
+            StatsLog.EnsureExists();
 
             var botdata = Config.Load();
             
@@ -47,6 +49,9 @@ namespace MonkeyBot
 
             _auditLog = new AuditLog();
              _auditLog.Mount(_client);
+
+            _statsLog = new StatsLog();
+            _statsLog.Mount(_client);
             // Allow problem to use Auditing
 
             _cmdHandler = new CommandHandler();

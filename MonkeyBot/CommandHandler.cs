@@ -45,6 +45,7 @@ namespace MonkeyBot
 
             var context = new CommandContext(_client, msg);
             AuditLog.AddMessageEvent(s);
+            StatsLog.AddMessageEvent(s);
 
             // Check if sender is gagged
             if (AdminModule.mutedNicknames.Contains(s.Author.Username)) { await s.DeleteAsync(); return; }
