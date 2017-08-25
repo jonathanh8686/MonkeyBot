@@ -14,7 +14,7 @@ namespace MonkeyBot
     {
         private DiscordSocketClient _client;
 
-        public static string FilePath { get; } = "Logs/" + DateTime.Now.Day + "." + DateTime.Now.Year + ".log";
+        public static string FilePath { get; } = "Logs/" + DateTime.Now.Day + "." + DateTime.Now.Month + "." + DateTime.Now.Year + ".log";
 
         public void Mount(DiscordSocketClient c)
         {
